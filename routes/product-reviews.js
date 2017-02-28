@@ -39,7 +39,10 @@ Product.findById(productId, (err, prodDoc) => {
 
   prodDoc.save((err) => {
     if (err) {
-      next(err);
+      res.render('products/new', {
+        errorMessage: 'Oh no! Validation Failzsed!',
+        errors: theProduct.errors
+      });
       return;
     }
     res.redirect(`/products/${productId}`);
