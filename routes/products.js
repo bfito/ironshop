@@ -1,0 +1,119 @@
+const express = require('express');
+
+const Product = require('../models/product.js');
+
+const router = express.Router();
+
+
+router.get('/products', (req, res, next) => {
+  Product.find((err, products) => {
+    if (err) {
+      next(err);
+      return;
+    }
+
+      // display views/products/index.ejs
+    res.render('products/index', {
+      products: products
+    });
+  });
+});
+
+router.get('/products/new', (req, res, next) => {
+    // display views/products/new.ejs
+  res.render(('products/new'), {
+    errorMessage: ''
+  });
+});
+
+router.post('/products', (req, res, next) => {
+  const productInfo = {
+    name: req.body.name,
+    price: req.body.price,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description
+  };
+
+  const theProduct = new Product(productInfo);
+
+  theProduct.save((err) => {
+    if (err) {
+      res.render('products/new', {
+        errorMessage: 'Oh no! Validation Failzsed!'
+      });
+      return;
+    }
+
+      // redirect to http://localhost:3000/products
+      //                                  ---------
+      //                                       |
+      //              --------------------------
+      //              |
+    res.redirect('/products');
+  });
+});
+
+// res.render('products/show', {
+//   product: prodDoc
+// });
+
+router.get('/products/:id/edit', (req, res, next) => {
+  const productId = req.params.id;
+
+  Product.findById(productId, (err, prodDoc) => {
+    if (err) { return next(err); }
+    res.render('products/edit', {
+      product: prodDoc
+    });
+  });
+});
+
+
+router.post('/products/:id', (req, res, next) => {
+  const productId = req.params.id;
+  const productUpdates = {
+    name: req.body.name,
+    price: req.body.price,
+    imageUrl: req.body.imageUrl,
+    description: req.body.description
+};
+  // db.products.updateOne({ _id: product }, { $set: productUpdates })
+  Product.findByIdAndUpdate(productId, productUpdates, (err, product) => {
+    if (err){
+      next(err);
+      return;
+    }
+      res.redirect('/products');
+    });
+  });
+
+  router.post('/products/:id/delete', (req, res, next) => {
+    const productId = req.params.id;
+
+    console.log(productId);
+
+    // db.products.deleteOne({_id: productId })
+    Product.findByIdAndRemove(productId, (err, product) => {
+      if (err) {
+        next(err);
+        return;
+      }
+      res.redirect('/products');
+    });
+  });
+
+router.get('/products/:id', (req, res, next) => {
+  let productId = req.params.id;
+
+  Product.findById(productId, (err, prodDoc) => {
+    if (err) {
+      next(err);
+      return;
+    }
+    res.render('products/show', {
+      product: prodDoc
+    });
+  });
+});
+
+module.exports = router;
