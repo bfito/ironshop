@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Products</title>
+    <title>Add a New Product</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
@@ -9,6 +9,12 @@
 
     <% if (errorMessage) { %>
       <p class="error"> <%= errorMessage %> </p>
+    <% } %>
+
+    <% if (typeof errors !== 'undefined') { %>
+      <% for (let errorField in errors) { %>
+        <div> <%= errors[errorField].message %> </div>
+      <% } %>
     <% } %>
 
     <form action="/products" method="post">
@@ -26,5 +32,8 @@
 
       <button type="submit">Create Product</button>
     </form>
+
+    <a href="/products"> Go Back to Products </a>
+
   </body>
 </html>

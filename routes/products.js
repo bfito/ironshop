@@ -39,7 +39,8 @@ router.post('/products', (req, res, next) => {
   theProduct.save((err) => {
     if (err) {
       res.render('products/new', {
-        errorMessage: 'Oh no! Validation Failzsed!'
+        errorMessage: 'Oh no! Validation Failzsed!',
+        errors: theProduct.errors
       });
       return;
     }
